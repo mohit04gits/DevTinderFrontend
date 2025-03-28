@@ -9,26 +9,25 @@ const Feed = () => {
   const dispatch = useDispatch();
   const feed = useSelector((store) => store.feed);
 
-  const getFeed = async () => {
-    try {
-      console.log("Fetching feed...");
+ const getFeed = async () => {
+  console.log("Fetching feed...");
+  try {
+    const res = await axios.get(BASE_URL + "/feed", {
+      withCredentials: true, // Ensure cookies are sent
+    });
+    console.log("Feed response:", res.data);
+    dispatch(addFeed(res.data));
+  } catch (err) {
+    console.error("Feed Error:", err.response ? err.response.data : err);
+  }
+};
 
-      const res = await axios.get(`${BASE_URL}/feed`, {
-        withCredentials: true, // ✅ Ensures cookies are sent
-      });
-
-      console.log("Feed fetched successfully:", res.data);
-      dispatch(addFeed(res.data));
-    } catch (err) {
-      console.error("Error fetching feed:", err.response?.data || err.message);
-    }
-  };
 
   useEffect(() => {
     if (!feed || feed.length === 0) {
       getFeed();
     }
-  }, [feed]); // ✅ Ensures it fetches only when feed is empty
+  }, []); // ✅ Ensures it fetches only when feed is empty
 
   if (!feed || feed.length === 0) {
     return (
